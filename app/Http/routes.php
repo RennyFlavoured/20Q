@@ -10,6 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::group(['middleware' => 'auth.private'], function () {
+
+    Route::post('lobby/join',
+        'LobbyController@findLobby');
+});
 
 Route::get('/', function () {
     return view('welcome');

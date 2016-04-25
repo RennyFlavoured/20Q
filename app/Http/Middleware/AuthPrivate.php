@@ -4,20 +4,19 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 
-use App\Exceptions\Fatal\ConfigException;
-
 use Closure;
 
 class AuthPrivate
 {
-    const PRIVATE_TOKEN_HEADER = "Token";
+    const PRIVATE_TOKEN_HEADER = "secret";
 
     public function handle(Request $request, Closure $next)
     {
-        $privateKey = config( 'app.accessSecret' );
+        $privateKey = config( 'app.secret' );
+
         if ( empty( $privateKey ) )
         {
-            throw ConfigException::PrivateKeyNotConfigured();
+            abort( 403, "Unauthorized" );
         }
 
         if ( $request->header( self::PRIVATE_TOKEN_HEADER ) != $privateKey )
