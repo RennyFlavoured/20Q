@@ -7,28 +7,25 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
+use Illuminate\Http\Request;
 
-use App\Lobby;
+use App\LobbyLive;
 
 class LobbyController extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
 
-    public function findLobby()
+    public function findLobby(Request $request)
     {
-        $lobby = Lobby::where('current_players', '<', 20)
-            ->first();
+        $this->validate( $request, [
+            'PlayerKey'    => 'required|string'
+        ]);
 
-        if(!$lobby){
-            $lobby = Lobby::createLobby();
-        }
+        $lobbyConfig = new LobbyLive();
+        $lobby = $lobbyConfig->findLobby($request->get('PlayerKey'));
 
-        $return  = [
-            'lobby_key'     => $lobby->key,
-            'lobby_members' => $lobby->current_players
-        ];
 
-        return $return;
+        return $lobby;
     }
 
 }

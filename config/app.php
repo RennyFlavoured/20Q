@@ -204,6 +204,6 @@ return [
 
     ],
 
-    'secret' => 'nico_4_prez',
+    'secret' => 'Q8CgjQVKoAKc692O',
 
 ];

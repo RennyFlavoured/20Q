@@ -12,6 +12,12 @@
 */
 Route::group(['middleware' => 'auth.private'], function () {
 
+    Route::post('player/create',
+        'PlayerController@createPlayer');
+});
+
+Route::group(['middleware' => 'auth.playerAuth'], function () {
+
     Route::post('lobby/join',
         'LobbyController@findLobby');
 });

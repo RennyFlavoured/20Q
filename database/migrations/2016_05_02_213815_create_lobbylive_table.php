@@ -18,7 +18,7 @@ class CreateLobbyLiveTable extends Migration
             $table->json('PlayerList');
             $table->json('QuestionList');
             $table->integer('PlayerCount');
-            $table->integer('max_players');
+            $table->boolean('Live');
             $table->timestamps();
         });
     }
