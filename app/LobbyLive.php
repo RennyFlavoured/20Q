@@ -60,10 +60,8 @@ class LobbyLive extends Model
     private function findOpen($playerKey)
     {
         $players = new Players();
-//        $lobbyResult = false;
         $lobbyResult = self::where('Live', false)
             ->first();
-
 
         if($lobbyResult){
 
@@ -72,8 +70,8 @@ class LobbyLive extends Model
 
             $start = $lobbyUpdate->created_at;
             $diff = $start->diffInSeconds(Carbon::now());
-//            set a context object for this!
-            $ready = $this->readyCheck($lobbyUpdate);
+
+            $this->readyCheck($lobbyUpdate);
 
             return [$lobbyUpdate, $diff];
         }

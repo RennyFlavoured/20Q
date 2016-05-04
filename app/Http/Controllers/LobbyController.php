@@ -9,20 +9,27 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesResources;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\PlayerContext;
+
 use App\LobbyLive;
 
 class LobbyController extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
 
-    public function findLobby(Request $request)
+    /** @var playerContext */
+    private $playerContext;
+
+    public function __construct(PlayerContext $playerContext)
     {
-        $this->validate( $request, [
-            'PlayerKey'    => 'required|string'
-        ]);
+        $this->playerContext = $playerContext;
+    }
+
+    public function findLobby()
+    {
 
         $lobbyConfig = new LobbyLive();
-        $lobby = $lobbyConfig->findLobby($request->get('PlayerKey'));
+        $lobby = $lobbyConfig->findLobby($this->playerContext->getPlayerKey());
 
 
         return $lobby;

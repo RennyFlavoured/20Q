@@ -15,8 +15,8 @@ class CreateLobbyLiveTable extends Migration
         Schema::create('LobbyLive', function (Blueprint $table) {
             $table->increments('LobbyId');
             $table->string('Key')->unique();
-            $table->json('PlayerList');
-            $table->json('QuestionList');
+            $table->string('PlayerList');
+            $table->string('QuestionList');
             $table->integer('PlayerCount');
             $table->boolean('Live');
             $table->timestamps();
