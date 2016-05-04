@@ -73,7 +73,7 @@ class LobbyLive extends Model
 
             $this->readyCheck($lobbyUpdate);
 
-            return [$lobbyUpdate, $diff];
+            return $lobbyUpdate;
         }
 
         return self::createLobby($playerKey);
