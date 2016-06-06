@@ -17,6 +17,7 @@ class LobbyLive extends Model
 
     public $timestamps = true;
 
+
     const MAX_PLAYERS = 20;
     const TIMEOUT = 32;
 
@@ -55,9 +56,7 @@ class LobbyLive extends Model
 
     public function findLobby($playerKey)
     {
-        $lobbyExists = $this->findOpen($playerKey);
-
-        return $lobbyExists;
+        return $this->findOpen($playerKey);
     }
 
     public function timeRemaining($created)
@@ -67,6 +66,15 @@ class LobbyLive extends Model
         }
 
         return $this->getDiff($created);
+    }
+
+    public function findCurrent($gameId){
+        $lobby = self::where('LobbyId', $gameId)
+            ->first();
+
+        $this->readyCheck($lobby);
+
+        return $lobby;
     }
 
     private function findOpen($playerKey)
@@ -80,16 +88,7 @@ class LobbyLive extends Model
             $lobbyUpdate = $this->setLobbyCounters($lobbyResult,$playerKey);
             $players->setCurrentGame($lobbyUpdate->LobbyId, $playerKey);
 
-
-//            set a context object for this!
-            $ready = $this->readyCheck($lobbyUpdate);
-
-
-            $start = $lobbyUpdate->created_at;
-            $diff = $start->diffInSeconds(Carbon::now());
-
             $this->readyCheck($lobbyUpdate);
-
 
             return $lobbyUpdate;
         }
@@ -114,6 +113,8 @@ class LobbyLive extends Model
         $diff = $this->getDiff($lobby->created_at);
 
         if(($diff >= self::TIMEOUT) || ($lobby->PlayerCount == self::MAX_PLAYERS)){
+            $this->addBots($lobby);
+
             $lobby->Live = true;
             $lobby->save();
 
@@ -121,6 +122,23 @@ class LobbyLive extends Model
         }
 
         $this->timeRemaining = $diff;
+    }
+
+    private function addBots($lobby)
+    {
+        $playerList = json_decode($lobby->PlayerList, true);
+        $delta = (20 - (count($playerList))) ;
+
+        if($delta > 0){
+            for ($k = 0 ; $k < $delta; $k++){
+                $playerList[] = 'bot_' . $k;
+            }
+        }
+
+        $lobby->PlayerList = json_encode($playerList);
+        $lobby->save();
+
+        return $lobby;
     }
 
     private function getDiff($created)
