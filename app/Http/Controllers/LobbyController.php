@@ -23,9 +23,19 @@ class LobbyController extends BaseController
 
         $lobbyConfig = new LobbyLive();
         $lobby = $lobbyConfig->findLobby($request->get('PlayerKey'));
+        $timeRemaining = $lobbyConfig->timeRemaining($lobby->created_at);
+
+        $format = [
+            'LobbyKey' => $lobby->LobbyId,
+            'PlayerList' => $lobby->PlayerList,
+            'QuestionList' => $lobby->QuestionList,
+            'PlayerCount' => $lobby->PlayerCount,
+            'Live' => $lobby->Live,
+            'TimeRemaining' => $timeRemaining . 's'
+        ];
 
 
-        return $lobby;
+        return $format;
     }
 
 }

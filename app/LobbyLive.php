@@ -13,9 +13,12 @@ class LobbyLive extends Model
     protected $table = 'LobbyLive';
     protected $primaryKey = 'LobbyId';
 
+    private $timeRemaining;
+
     public $timestamps = true;
 
     const MAX_PLAYERS = 20;
+    const TIMEOUT = 32;
 
     public static function generateQuestions()
     {
@@ -57,6 +60,15 @@ class LobbyLive extends Model
         return $lobbyExists;
     }
 
+    public function timeRemaining($created)
+    {
+        if($this->timeRemaining){
+            return $this->timeRemaining;
+        }
+
+        return $this->getDiff($created);
+    }
+
     private function findOpen($playerKey)
     {
         $players = new Players();
@@ -70,12 +82,11 @@ class LobbyLive extends Model
             $lobbyUpdate = $this->setLobbyCounters($lobbyResult,$playerKey);
             $players->setCurrentGame($lobbyUpdate->LobbyId, $playerKey);
 
-            $start = $lobbyUpdate->created_at;
-            $diff = $start->diffInSeconds(Carbon::now());
 //            set a context object for this!
             $ready = $this->readyCheck($lobbyUpdate);
 
-            return [$lobbyUpdate, $diff];
+
+            return $lobbyUpdate;
         }
 
         return self::createLobby($playerKey);
@@ -95,18 +106,23 @@ class LobbyLive extends Model
 
     private function readyCheck($lobby)
     {
-        $start = $lobby->created_at;
+        $diff = $this->getDiff($lobby->created_at);
 
-        $diff = $start->diffInSeconds(Carbon::now());
-
-        if($lobby->PlayerCount == self::MAX_PLAYERS){
+        if(($diff >= self::TIMEOUT) || ($lobby->PlayerCount == self::MAX_PLAYERS)){
             $lobby->Live = true;
             $lobby->save();
 
-            return true;
+            $this->timeRemaining = 0;
         }
 
-        return false;
+        $this->timeRemaining = $diff;
+    }
+
+    private function getDiff($created)
+    {
+        $diff = $created->diffInSeconds(Carbon::now());
+
+        return $diff;
     }
 
 
