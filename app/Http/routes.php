@@ -21,7 +21,3 @@ Route::group(['middleware' => 'auth.playerAuth'], function () {
     Route::post('lobby/join',
         'LobbyController@findLobby');
 });
-
-Route::get('/', function () {
-    return view('welcome');
-});

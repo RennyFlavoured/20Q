@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Controllers\PlayerContext;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Http\Request;
@@ -25,6 +26,15 @@ class Players extends Model
         $player->save();
 
         return $player;
+    }
+    
+    public function clearCurrentGame(PlayerContext $player)
+    {
+        $player =  self::where('player_key', $player->getPlayerKey())
+            ->first();
+
+        $player->CurrentGame = null;
+        $player->save();
     }
 
     public function setCurrentGame($lobbyId, $playerKey)
