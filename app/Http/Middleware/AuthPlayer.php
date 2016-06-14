@@ -16,7 +16,7 @@ class AuthPlayer
     /** @var PlayerContext */
     private $playerContext;
 
-    const PLAYER_ID_HEADER = "PlayerKey";
+    const PLAYER_ID_HEADER = "playerKey";
 
     public function __construct( PlayerContext $playerContext )
     {

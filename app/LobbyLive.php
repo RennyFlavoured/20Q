@@ -17,7 +17,6 @@ class LobbyLive extends Model
 
     public $timestamps = true;
 
-
     const MAX_PLAYERS = 20;
     const TIMEOUT = 32;
 
@@ -44,11 +43,14 @@ class LobbyLive extends Model
 
         $Qs = self::generateQuestions();
 
+        $currDateTime = new Carbon();
+
         $lobby->Key = uniqid('20q_');
         $lobby->PlayerList = json_encode([$player]);
         $lobby->QuestionList = json_encode($Qs);
         $lobby->PlayerCount = 1;
         $lobby->Live = false;
+        $lobby->StartDate = $currDateTime->addSeconds(self::TIMEOUT);
         $lobby->save();
 
         return $lobby;
@@ -147,8 +149,4 @@ class LobbyLive extends Model
 
         return $diff;
     }
-
-
-
-    //
 }

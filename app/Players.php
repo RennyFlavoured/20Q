@@ -19,8 +19,8 @@ class Players extends Model
         $player = new Players();
 
         $player->player_key = uniqid();
-        $player->username = $request->input('Username', 'null');;
-        $player->email = $request->input('Email', 'null');
+        $player->username = $request->input('username', 'null');
+        $player->email = $request->input('email', 'null');
         $player->pic = 'pic';
         $player->device = 'phone';
         $player->save();

@@ -20,16 +20,16 @@ class PlayerController extends BaseController
     public function createPlayer(Request $request)
     {
         $this->validate( $request, [
-            'Username'    => 'string',
-            'Email'       => 'string'
+            'username'    => 'string',
+            'email'       => 'string'
         ]);
 
         $player = Players::createPlayer($request);
 
         $return  = [
-            'PlayerKey'     => $player->player_key,
-            'Username'      => $player->username,
-            'Email'         => $player->email
+            'playerKey'     => $player->player_key,
+            'username'      => $player->username,
+            'email'         => $player->email
         ];
 
         return $return;
