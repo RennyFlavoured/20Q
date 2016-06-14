@@ -42,12 +42,13 @@ class LobbyController extends BaseController
         }
         
         $format = [
-            'LobbyKey' => $lobby->LobbyId,
-            'PlayerList' => $lobby->PlayerList,
-            'QuestionList' => $lobby->QuestionList,
-            'PlayerCount' => $lobby->PlayerCount,
-            'Live' => $lobby->Live,
-            'TimeElapsed' => $lobbyConfig->timeRemaining($lobby->created_at) . 's'
+            'lobbyId'       => $lobby->LobbyId,
+            'playerList'    => $lobby->PlayerList,
+            'questionList'  => $lobby->QuestionList,
+            'playerCount'   => $lobby->PlayerCount,
+            'live'          => $lobby->Live,
+            'createdAt'     => $lobby->created_at->toDateTimeString(),
+            'startDate'     => $lobby->StartDate->toDateTimeString()
         ];
 
 
