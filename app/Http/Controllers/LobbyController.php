@@ -37,10 +37,10 @@ class LobbyController extends BaseController
             $lobby = $lobbyConfig->findLobby($this->playerContext->getPlayerKey());
         }
 
-        if($lobbyConfig->timeRemaining($lobby->created_at) > 50){
-            $player->clearCurrentGame($this->playerContext);
-        }
-        
+//        if($lobbyConfig->$this->liveCheck($lobby->created_at)($lobby->created_at) > 50){
+//            $player->clearCurrentGame($this->playerContext);
+//        }
+
         $format = [
             'lobbyId'       => $lobby->LobbyId,
             'playerList'    => $lobby->PlayerList,
@@ -48,7 +48,7 @@ class LobbyController extends BaseController
             'playerCount'   => $lobby->PlayerCount,
             'live'          => $lobby->Live,
             'createdAt'     => $lobby->created_at->toDateTimeString(),
-            'startDate'     => $lobby->StartDate->toDateTimeString()
+            'startDate'     => $lobby->StartDate
         ];
 
 

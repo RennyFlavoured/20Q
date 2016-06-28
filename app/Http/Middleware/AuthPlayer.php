@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PlayerContext;
 
 use App\Players;
+use App\LobbyLive;
 
 use Closure;
 use Response;
@@ -34,18 +35,40 @@ class AuthPlayer
             ], 403 );
         }
 
-        $player = Players::where('player_key', $key)
-            ->first();
+        $user = $this->getUser($key);
 
-        if ( !$player )
-        {
-            return Response::json( [
-                'exception' => 'No Match for PlayerKey, player does not exist',
-            ], 403 );
-        }
-
-        $this->playerContext->PlayerContext($player);
+        $this->playerContext->PlayerContext($user);
 
         return $next($request);
     }
+
+    private function getUser($key)
+    {
+        $player = Players::where('player_key', $key)
+            ->first();
+
+        if (!$player) {
+            return Response::json([
+                'exception' => 'No Match for playerKey, player does not exist',
+            ], 403);
+        }
+
+        return $player;
+    }
+
+//    private function checkExpiredGame($user)
+//    {
+//
+//        $player->CurrentGame = null;
+//        $player->save();
+//    }
+//
+//    private function getCurrentGame($user)
+//    {
+//        $lobby = LobbyLive::where('LobbyId', $user->CurrentGame)
+//            ->first();
+//
+//        $player->CurrentGame = null;
+//        $player->save();
+//    }
 }

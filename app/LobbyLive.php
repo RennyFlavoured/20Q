@@ -13,8 +13,6 @@ class LobbyLive extends Model
     protected $table = 'LobbyLive';
     protected $primaryKey = 'LobbyId';
 
-    private $timeRemaining;
-
     public $timestamps = true;
 
     const MAX_PLAYERS = 20;
@@ -44,13 +42,14 @@ class LobbyLive extends Model
         $Qs = self::generateQuestions();
 
         $currDateTime = new Carbon();
+        $currDateTime->addSeconds(self::TIMEOUT);
 
         $lobby->Key = uniqid('20q_');
         $lobby->PlayerList = json_encode([$player]);
         $lobby->QuestionList = json_encode($Qs);
         $lobby->PlayerCount = 1;
         $lobby->Live = false;
-        $lobby->StartDate = $currDateTime->addSeconds(self::TIMEOUT);
+        $lobby->StartDate = $currDateTime;
         $lobby->save();
 
         return $lobby;
@@ -61,15 +60,6 @@ class LobbyLive extends Model
         return $this->findOpen($playerKey);
     }
 
-    public function timeRemaining($created)
-    {
-        if($this->timeRemaining){
-            return $this->timeRemaining;
-        }
-
-        return $this->getDiff($created);
-    }
-
     public function findCurrent($gameId){
         $lobby = self::where('LobbyId', $gameId)
             ->first();
@@ -77,6 +67,11 @@ class LobbyLive extends Model
         $this->readyCheck($lobby);
 
         return $lobby;
+    }
+
+    public function timeRemaining($created)
+    {
+        return ;
     }
 
     private function findOpen($playerKey)
@@ -112,24 +107,20 @@ class LobbyLive extends Model
 
     private function readyCheck($lobby)
     {
-        $diff = $this->getDiff($lobby->created_at);
+        $isLive = $this->liveCheck($lobby);
 
-        if(($diff >= self::TIMEOUT) || ($lobby->PlayerCount == self::MAX_PLAYERS)){
+        if($isLive || ($lobby->PlayerCount == self::MAX_PLAYERS)){
             $this->addBots($lobby);
 
             $lobby->Live = true;
             $lobby->save();
-
-            $this->timeRemaining = 0;
         }
-
-        $this->timeRemaining = $diff;
     }
 
     private function addBots($lobby)
     {
         $playerList = json_decode($lobby->PlayerList, true);
-        $delta = (20 - (count($playerList))) ;
+        $delta = (20 - (count($playerList)));
 
         if($delta > 0){
             for ($k = 0 ; $k < $delta; $k++){
@@ -143,10 +134,11 @@ class LobbyLive extends Model
         return $lobby;
     }
 
-    private function getDiff($created)
+    public function liveCheck($lobby)
     {
-        $diff = $created->diffInSeconds(Carbon::now());
+        $compareDate = new Carbon($lobby->StartDate);
 
-        return $diff;
+        $check = $compareDate->lte(new Carbon());
+        return $check;
     }
 }

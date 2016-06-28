@@ -20,4 +20,7 @@ Route::group(['middleware' => 'auth.playerAuth'], function () {
 
     Route::post('lobby/join',
         'LobbyController@findLobby');
+
+    Route::post('game/round',
+        'GameController@gameStatus');
 });

@@ -8,22 +8,16 @@ use App\Players;
 
 class PlayerContext {
 
-    /** @var player_key **/
     private $player_key;
 
-    /** @var username **/
     private $username;
 
-    /** @var email **/
     private $email;
 
-    /** @var current_game **/
     private $current_game;
 
-    /** @var pic **/
     private $pic;
-
-    /** @var device **/
+    
     private $device;
 
     public function getPlayerKey()

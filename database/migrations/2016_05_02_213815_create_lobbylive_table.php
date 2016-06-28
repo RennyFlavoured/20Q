@@ -19,6 +19,7 @@ class CreateLobbyLiveTable extends Migration
             $table->string('QuestionList');
             $table->integer('PlayerCount');
             $table->boolean('Live');
+            $table->boolean('Complete');
             $table->string('StartDate');
             $table->timestamps();
         });
